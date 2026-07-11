@@ -1,0 +1,68 @@
+---
+// 作品展示 —— 大圖直向瀏覽（一張接一張往下捲）。
+// 目前用灰色佔位框代替作品圖，Phase 5 換成真實作品。
+const projects = [
+	{ title: "作品一", tag: "品牌設計", year: "2025" },
+	{ title: "作品二", tag: "UI/UX", year: "2024" },
+	{ title: "作品三", tag: "視覺設計", year: "2024" },
+];
+---
+
+<section id="works" class="section">
+	<div class="container">
+		<p class="section-title">作品展示</p>
+		<div class="works">
+			{
+				projects.map((p) => (
+					<article class="work">
+						<div class="work__image">
+							<span>作品圖片佔位</span>
+						</div>
+						<div class="work__meta">
+							<h3 class="work__title">{p.title}</h3>
+							<p class="work__tag">
+								{p.tag} · {p.year}
+							</p>
+						</div>
+					</article>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.works {
+		display: flex;
+		flex-direction: column;
+		gap: 5rem;
+	}
+	.work__image {
+		aspect-ratio: 16 / 10;
+		background: #f2f2f2;
+		border: 1px solid var(--color-border);
+		border-radius: 12px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--color-muted);
+		font-size: 0.9rem;
+	}
+	.work__meta {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		margin-top: 1rem;
+		gap: 1rem;
+	}
+	.work__title {
+		font-size: 1.4rem;
+		margin: 0;
+	}
+	.work__tag {
+		color: var(--color-muted);
+		font-size: 0.95rem;
+		margin: 0;
+		white-space: nowrap;
+	}
+</style>

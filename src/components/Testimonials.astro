@@ -1,0 +1,64 @@
+---
+// 同事評語。Phase 5 換成真實的推薦語與姓名/職稱。
+const testimonials = [
+	{ quote: "這裡放同事對你的評語，一段簡短真誠的推薦，會很有說服力。", name: "同事姓名", role: "職稱 · 公司" },
+	{ quote: "另一段評語佔位。可以來自主管、客戶或合作夥伴，角度不同更立體。", name: "同事姓名", role: "職稱 · 公司" },
+];
+---
+
+<section id="testimonials" class="section testimonials">
+	<div class="container">
+		<p class="section-title">同事評語</p>
+		<div class="testimonials__grid">
+			{
+				testimonials.map((t) => (
+					<figure class="testimonial">
+						<blockquote>“{t.quote}”</blockquote>
+						<figcaption>
+							<strong>{t.name}</strong>
+							<span>{t.role}</span>
+						</figcaption>
+					</figure>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.testimonials {
+		background: #fafafa;
+		border-block: 1px solid var(--color-border);
+	}
+	.testimonials__grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem;
+	}
+	.testimonial {
+		margin: 0;
+		background: var(--color-bg);
+		border: 1px solid var(--color-border);
+		border-radius: 12px;
+		padding: 2rem;
+	}
+	.testimonial blockquote {
+		margin: 0 0 1.5rem;
+		font-size: 1.1rem;
+		line-height: 1.7;
+	}
+	.testimonial figcaption {
+		display: flex;
+		flex-direction: column;
+	}
+	.testimonial figcaption span {
+		color: var(--color-muted);
+		font-size: 0.9rem;
+	}
+
+	@media (max-width: 720px) {
+		.testimonials__grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

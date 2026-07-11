@@ -1,0 +1,67 @@
+---
+// Hero 首屏。這是你有 Figma 設計稿的區塊 —— Phase 4 會用你的設計替換這裡。
+// 目前是簡單佔位版。
+---
+
+<section id="top" class="hero">
+	<div class="container">
+		<p class="hero__eyebrow">設計師 · 作品集</p>
+		<h1 class="hero__title">Sullivan Hsu</h1>
+		<p class="hero__subtitle">
+			這裡放一句話介紹你自己 —— 你是誰、擅長什麼、想傳達什麼。
+			（Phase 4 會換成你的 Figma 設計）
+		</p>
+		<div class="hero__cta">
+			<a href="#works" class="btn">看作品</a>
+			<a href="#contact" class="btn btn--ghost">聯絡我</a>
+		</div>
+	</div>
+</section>
+
+<style>
+	.hero {
+		min-height: calc(100vh - 4rem);
+		display: flex;
+		align-items: center;
+	}
+	.hero__eyebrow {
+		font-size: 0.9rem;
+		letter-spacing: 0.15em;
+		text-transform: uppercase;
+		color: var(--color-muted);
+		margin: 0 0 1rem;
+	}
+	.hero__title {
+		font-size: clamp(2.5rem, 8vw, 5rem);
+		line-height: 1.05;
+		margin: 0 0 1.5rem;
+	}
+	.hero__subtitle {
+		font-size: 1.15rem;
+		color: var(--color-muted);
+		max-width: 32rem;
+		margin: 0 0 2.5rem;
+	}
+	.hero__cta {
+		display: flex;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+	.btn {
+		display: inline-block;
+		padding: 0.75rem 1.5rem;
+		border-radius: 999px;
+		background: var(--color-accent);
+		color: var(--color-bg);
+		font-size: 0.95rem;
+		transition: opacity 0.15s ease;
+	}
+	.btn:hover {
+		opacity: 0.85;
+	}
+	.btn--ghost {
+		background: transparent;
+		color: var(--color-text);
+		border: 1px solid var(--color-border);
+	}
+</style>

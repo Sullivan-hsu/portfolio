@@ -1,0 +1,70 @@
+/* ===========================================================
+   全站基礎樣式 (global styles)
+   之後 Phase 4/5 會依 Figma 設計稿調整這裡的顏色與字型
+   =========================================================== */
+
+:root {
+	/* 顏色 —— 先用中性色，之後改成你的品牌色 */
+	--color-bg: #ffffff;
+	--color-text: #1a1a1a;
+	--color-muted: #6b6b6b;
+	--color-border: #e5e5e5;
+	--color-accent: #1a1a1a;
+
+	/* 版面 */
+	--container: 1100px;
+	--section-gap: 6rem;
+
+	--font-sans: system-ui, -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+	/* 錨點跳轉時，留出固定 header 的高度，避免標題被蓋住 */
+	scroll-padding-top: 5rem;
+}
+
+body {
+	margin: 0;
+	font-family: var(--font-sans);
+	color: var(--color-text);
+	background: var(--color-bg);
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+}
+
+img {
+	max-width: 100%;
+	display: block;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+/* 置中的內容容器 */
+.container {
+	width: 100%;
+	max-width: var(--container);
+	margin-inline: auto;
+	padding-inline: 1.5rem;
+}
+
+/* 每個區塊的上下留白 */
+.section {
+	padding-block: var(--section-gap);
+}
+
+/* 區塊小標題（例如「作品展示」「關於我」） */
+.section-title {
+	font-size: 0.9rem;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--color-muted);
+	margin-bottom: 2rem;
+}

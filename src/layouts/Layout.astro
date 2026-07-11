@@ -1,0 +1,31 @@
+---
+// 全站共用的頁面外殼：<head> 設定 + 匯入全站樣式。
+// 每個頁面都用它包起來，改一次 head 全站生效。
+import "../styles/global.css";
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = "Sullivan Hsu · 作品集",
+	description = "設計師 Sullivan Hsu 的作品集",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-Hant">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>

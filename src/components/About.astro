@@ -1,0 +1,68 @@
+---
+// 關於我。Phase 5 會換成你真正的自我介紹與技能。
+const skills = ["品牌設計", "UI/UX", "視覺設計", "插畫", "Figma", "排版"];
+---
+
+<section id="about" class="section">
+	<div class="container about">
+		<p class="section-title">關於我</p>
+		<div class="about__grid">
+			<div class="about__bio">
+				<p>
+					這裡放你的自我介紹 —— 你的背景、設計理念、做過什麼、想找什麼樣的合作。
+					建議 2～3 段，讓人快速認識你。（佔位文字，Phase 5 替換）
+				</p>
+				<p>
+					可以聊聊你的工作方式、最在乎的設計價值，或一個代表性的經歷。
+				</p>
+			</div>
+			<aside class="about__skills">
+				<h3>專長</h3>
+				<ul>
+					{skills.map((s) => <li>{s}</li>)}
+				</ul>
+			</aside>
+		</div>
+	</div>
+</section>
+
+<style>
+	.about__grid {
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		gap: 3rem;
+	}
+	.about__bio {
+		font-size: 1.1rem;
+	}
+	.about__bio p {
+		margin: 0 0 1.25rem;
+	}
+	.about__skills h3 {
+		font-size: 1rem;
+		margin: 0 0 1rem;
+	}
+	.about__skills ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.about__skills li {
+		border: 1px solid var(--color-border);
+		border-radius: 999px;
+		padding: 0.35rem 0.9rem;
+		font-size: 0.9rem;
+		color: var(--color-muted);
+	}
+
+	/* 手機版：改成單欄堆疊 */
+	@media (max-width: 720px) {
+		.about__grid {
+			grid-template-columns: 1fr;
+			gap: 2rem;
+		}
+	}
+</style>

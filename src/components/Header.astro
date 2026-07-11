@@ -1,0 +1,59 @@
+---
+// 固定在上方的導覽列。點連結會平滑捲動到對應區塊。
+const navItems = [
+	{ label: "關於", href: "#about" },
+	{ label: "作品", href: "#works" },
+	{ label: "評語", href: "#testimonials" },
+	{ label: "聯絡", href: "#contact" },
+];
+---
+
+<header class="header">
+	<div class="container header__inner">
+		<a href="#top" class="header__logo">Sullivan Hsu</a>
+		<nav class="header__nav">
+			{navItems.map((item) => <a href={item.href}>{item.label}</a>)}
+		</nav>
+	</div>
+</header>
+
+<style>
+	.header {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+		backdrop-filter: blur(8px);
+		border-bottom: 1px solid var(--color-border);
+	}
+	.header__inner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 4rem;
+	}
+	.header__logo {
+		font-weight: 700;
+		font-size: 1.1rem;
+	}
+	.header__nav {
+		display: flex;
+		gap: 1.75rem;
+		font-size: 0.95rem;
+	}
+	.header__nav a {
+		color: var(--color-muted);
+		transition: color 0.15s ease;
+	}
+	.header__nav a:hover {
+		color: var(--color-text);
+	}
+
+	/* 手機版：導覽字小一點、間距縮一點 */
+	@media (max-width: 640px) {
+		.header__nav {
+			gap: 1rem;
+			font-size: 0.85rem;
+		}
+	}
+</style>
