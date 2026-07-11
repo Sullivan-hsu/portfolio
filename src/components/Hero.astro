@@ -1,67 +1,189 @@
 ---
-// Hero 首屏。這是你有 Figma 設計稿的區塊 —— Phase 4 會用你的設計替換這裡。
-// 目前是簡單佔位版。
+// Hero 首屏 —— 依 Figma 設計稿 (node 87:27) 重建。
+// 背景格紋與綠光暈用 CSS 畫（清晰、可縮放、零額外圖檔）；QLiEER logo 用原圖。
 ---
 
 <section id="top" class="hero">
-	<div class="container">
-		<p class="hero__eyebrow">設計師 · 作品集</p>
-		<h1 class="hero__title">Sullivan Hsu</h1>
-		<p class="hero__subtitle">
-			這裡放一句話介紹你自己 —— 你是誰、擅長什麼、想傳達什麼。
-			（Phase 4 會換成你的 Figma 設計）
-		</p>
-		<div class="hero__cta">
-			<a href="#works" class="btn">看作品</a>
-			<a href="#contact" class="btn btn--ghost">聯絡我</a>
+	<div class="container hero__content">
+		<div class="hero__headline">
+			<span class="hero__intro">我是</span>
+			<span class="hero__name">
+				<span class="hero__name-text">Sullivan</span>
+				<i class="hero__pin" aria-hidden="true"></i>
+			</span>
+			<span class="hero__slash">/</span>
+			<span class="hero__role-col">
+				<span class="hero__badge">5年經驗</span>
+				<span class="hero__role">Product designer</span>
+			</span>
+		</div>
+
+		<div class="hero__like">
+			<span class="hero__like-label">我喜歡</span>
+			<span class="hero__like-box">把混亂的議題，梳理成值得解決的設計挑戰</span>
+		</div>
+
+		<div class="hero__current">
+			<span class="hero__current-label">現職</span>
+			<img
+				src="/qlieer-logo.png"
+				alt="QLiEER"
+				class="hero__logo"
+				width="116"
+				height="38"
+			/>
 		</div>
 	</div>
 </section>
 
 <style>
 	.hero {
+		position: relative;
 		min-height: calc(100vh - 4rem);
 		display: flex;
 		align-items: center;
+		overflow: hidden;
+		background-color: #f7f6fb;
+		/* 疊層（由上到下）：右上綠光暈、左下綠光暈、直格線、橫格線、底色 */
+		background-image:
+			radial-gradient(
+				60% 55% at 100% 0%,
+				rgba(204, 255, 13, 0.55),
+				transparent 60%
+			),
+			radial-gradient(
+				55% 50% at 0% 100%,
+				rgba(204, 255, 13, 0.5),
+				transparent 60%
+			),
+			linear-gradient(to right, rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+			linear-gradient(to bottom, rgba(0, 0, 0, 0.045) 1px, transparent 1px);
+		background-size:
+			auto,
+			auto,
+			44px 44px,
+			44px 44px;
 	}
-	.hero__eyebrow {
-		font-size: 0.9rem;
-		letter-spacing: 0.15em;
-		text-transform: uppercase;
-		color: var(--color-muted);
-		margin: 0 0 1rem;
+
+	.hero__content {
+		position: relative;
+		z-index: 1;
 	}
-	.hero__title {
-		font-size: clamp(2.5rem, 8vw, 5rem);
-		line-height: 1.05;
-		margin: 0 0 1.5rem;
-	}
-	.hero__subtitle {
-		font-size: 1.15rem;
-		color: var(--color-muted);
-		max-width: 32rem;
-		margin: 0 0 2.5rem;
-	}
-	.hero__cta {
+
+	/* ---------- 主標 ---------- */
+	.hero__headline {
 		display: flex;
-		gap: 1rem;
 		flex-wrap: wrap;
+		align-items: flex-end;
+		gap: 0.75rem 1.1rem;
+		margin-bottom: 1.6rem;
 	}
-	.btn {
-		display: inline-block;
-		padding: 0.75rem 1.5rem;
-		border-radius: 999px;
-		background: var(--color-accent);
-		color: var(--color-bg);
-		font-size: 0.95rem;
-		transition: opacity 0.15s ease;
+	.hero__intro,
+	.hero__slash,
+	.hero__role {
+		font-size: clamp(2rem, 6vw, 3.5rem);
+		font-weight: 700;
+		line-height: 1;
+		color: #000;
 	}
-	.btn:hover {
-		opacity: 0.85;
+
+	.hero__name {
+		position: relative;
+		display: inline-flex;
 	}
-	.btn--ghost {
-		background: transparent;
-		color: var(--color-text);
-		border: 1px solid var(--color-border);
+	.hero__name-text {
+		font-size: clamp(2rem, 6vw, 3.5rem);
+		font-weight: 700;
+		line-height: 1;
+		color: #000;
+		/* 螢光綠 highlight：只塗文字下半部，像螢光筆劃過 */
+		background: linear-gradient(
+			transparent 38%,
+			#ccff0d 38%,
+			#ccff0d 92%,
+			transparent 92%
+		);
+		padding-inline: 0.1em;
+	}
+	/* 定位釘小標記 */
+	.hero__pin {
+		position: absolute;
+		top: -0.9em;
+		right: -0.15em;
+		width: 2px;
+		height: 1.5em;
+		background: #000;
+	}
+	.hero__pin::before {
+		content: "";
+		position: absolute;
+		top: -5px;
+		left: -3px;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: #000;
+	}
+
+	/* 5年經驗 + Product designer 直排 */
+	.hero__role-col {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.5rem;
+	}
+	.hero__badge {
+		font-size: clamp(0.95rem, 2.2vw, 1.5rem);
+		font-weight: 500;
+		color: #000;
+		background: #fff;
+		border: 2px solid #000;
+		border-radius: 37px;
+		padding: 0.3em 0.9em;
+		line-height: 1;
+	}
+
+	/* ---------- 我喜歡 + 黑框 ---------- */
+	.hero__like {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.7rem;
+		margin-bottom: 1.6rem;
+	}
+	.hero__like-label {
+		font-size: clamp(1.2rem, 3.5vw, 2.25rem);
+		font-weight: 500;
+		color: #000;
+	}
+	.hero__like-box {
+		font-size: clamp(1.25rem, 3.6vw, 2.5rem);
+		font-weight: 700;
+		color: #fff;
+		background: #000;
+		padding: 0.2em 0.35em;
+		line-height: 1.25;
+	}
+
+	/* ---------- 現職 QLiEER ---------- */
+	.hero__current {
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+	}
+	.hero__current-label {
+		font-size: clamp(1rem, 2vw, 1.25rem);
+		color: #000;
+	}
+	.hero__logo {
+		height: 2rem;
+		width: auto;
+	}
+
+	/* 手機版：定位釘在窄螢幕會浮空，藏起來較乾淨 */
+	@media (max-width: 640px) {
+		.hero__pin {
+			display: none;
+		}
 	}
 </style>
