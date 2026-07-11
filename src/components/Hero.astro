@@ -11,11 +11,13 @@ const phrases = [
 
 <section id="top" class="hero">
 	<div class="container hero__content">
+		<div class="hero__inner">
 		<div class="hero__headline">
 			<span class="hero__intro">我是</span>
 			<span class="hero__name">
-				<span class="hero__name-text">Sullivan</span>
-				<i class="hero__pin" aria-hidden="true"></i>
+				<span class="hero__name-text"
+					>Sullivan<i class="hero__pin" aria-hidden="true"></i></span
+				>
 			</span>
 			<span class="hero__slash">/</span>
 			<span class="hero__role-col">
@@ -42,6 +44,7 @@ const phrases = [
 				width="116"
 				height="38"
 			/>
+		</div>
 		</div>
 	</div>
 </section>
@@ -81,6 +84,12 @@ const phrases = [
 	}
 
 	/* ---------- 主標 ---------- */
+	/* 三排彼此靠左（齊頭）；整包由 .hero__inner 置中 */
+	.hero__inner {
+		width: fit-content;
+		max-width: 100%;
+		margin-inline: auto;
+	}
 	.hero__headline {
 		display: flex;
 		flex-wrap: wrap;
@@ -106,33 +115,32 @@ const phrases = [
 		font-weight: 700;
 		line-height: 1;
 		color: #000;
-		/* 螢光綠 highlight：只塗文字下半部，像螢光筆劃過 */
-		background: linear-gradient(
-			transparent 38%,
-			#ccff0d 38%,
-			#ccff0d 92%,
-			transparent 92%
-		);
-		padding-inline: 0.1em;
+		/* 實心綠底 */
+		background: #ccff0d;
+		padding: 0.1em 0.25em;
+		/* 抵銷上下 padding 造成的高度，維持與「我是」「/」的基線對齊 */
+		margin-block: -0.1em;
+		/* 作為 pin 的定位基準，讓 pin 底部能精準貼齊綠底底部 */
+		position: relative;
 	}
-	/* 定位釘小標記 */
+	/* 定位釘小標記：底部貼齊綠底底部，線往上延伸、圓點在頂端 */
 	.hero__pin {
 		position: absolute;
-		top: -0.9em;
-		right: -0.15em;
+		bottom: 0;
+		right: 0;
 		width: 2px;
 		height: 1.5em;
-		background: #000;
+		background: #b2df0a;
 	}
 	.hero__pin::before {
 		content: "";
 		position: absolute;
-		top: -5px;
+		top: -6px;
 		left: -3px;
 		width: 8px;
 		height: 8px;
 		border-radius: 50%;
-		background: #000;
+		background: #b2df0a;
 	}
 
 	/* 5年經驗 + Product designer 直排 */
@@ -211,7 +219,7 @@ const phrases = [
 	.hero__current {
 		display: flex;
 		align-items: center;
-		gap: 0.9rem;
+		gap: 0.3rem;
 	}
 	.hero__current-label {
 		font-size: clamp(1rem, 2vw, 1.25rem);
