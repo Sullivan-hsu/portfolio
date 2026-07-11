@@ -1,6 +1,12 @@
 ---
 // Hero 首屏 —— 依 Figma 設計稿 (node 87:27) 重建。
 // 背景格紋與綠光暈用 CSS 畫（清晰、可縮放、零額外圖檔）；QLiEER logo 用原圖。
+// 黑框內三句話向上滾動輪播（見下方 <script>）。
+const phrases = [
+	"把混亂的議題，梳理成值得解決的設計挑戰",
+	"透過研究、與使用者交流，去真正了解問題",
+	"利用設計在真實場域中創造價值",
+];
 ---
 
 <section id="top" class="hero">
@@ -20,7 +26,11 @@
 
 		<div class="hero__like">
 			<span class="hero__like-label">我喜歡</span>
-			<span class="hero__like-box">把混亂的議題，梳理成值得解決的設計挑戰</span>
+			<span class="hero__rotator" id="hero-rotator">
+				<span class="hero__rotator-track">
+					{phrases.map((p) => <span class="hero__rotator-item">{p}</span>)}
+				</span>
+			</span>
 		</div>
 
 		<div class="hero__current">
@@ -156,13 +166,44 @@
 		font-weight: 500;
 		color: #000;
 	}
-	.hero__like-box {
+
+	/* 黑框輪播容器：翻牌視窗（超出範圍裁切），寬度平滑跟著文字伸縮 */
+	.hero__rotator {
+		display: inline-block;
+		overflow: hidden;
+		vertical-align: bottom;
+		background: #000;
+		color: #fff;
+		padding: 0.2em 0.35em;
+		box-sizing: content-box;
+		height: 1.25em; /* 一行高，JS 會換算成精確 px */
 		font-size: clamp(1.25rem, 3.6vw, 2.5rem);
 		font-weight: 700;
-		color: #fff;
-		background: #000;
-		padding: 0.2em 0.35em;
 		line-height: 1.25;
+		/* 寬度瞬間跳到新句寬度（不平滑伸縮）；垂直滑動仍保留過渡 */
+		transition: none;
+	}
+	.hero__rotator-track {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.hero__rotator-track.is-instant {
+		transition: none;
+	}
+	.hero__rotator-item {
+		white-space: nowrap;
+		width: max-content; /* 保持文字自然寬度，量測才準、不被容器壓縮 */
+		line-height: 1.25;
+	}
+
+	/* 尊重「減少動態」偏好：關掉滑動與伸縮，改直接切換 */
+	@media (prefers-reduced-motion: reduce) {
+		.hero__rotator,
+		.hero__rotator-track {
+			transition: none;
+		}
 	}
 
 	/* ---------- 現職 QLiEER ---------- */
@@ -187,3 +228,63 @@
 		}
 	}
 </style>
+
+<script>
+	// 黑框三句話「向上滾動」輪播，寬度平滑跟著文字伸縮，每 3 秒切換。
+	function initRotator() {
+		const rotator = document.getElementById("hero-rotator");
+		if (!rotator) return;
+		const track = rotator.querySelector<HTMLElement>(".hero__rotator-track");
+		if (!track) return;
+
+		const originals = Array.from(
+			track.querySelectorAll<HTMLElement>(".hero__rotator-item"),
+		);
+		if (originals.length < 2) return;
+
+		// 在最後補一個「第一句」的複製，讓循環永遠向上、不會倒退跳回。
+		const clone = originals[0].cloneNode(true) as HTMLElement;
+		track.appendChild(clone);
+		const items = [...originals, clone];
+
+		let index = 0;
+
+		const itemHeight = () => originals[0].getBoundingClientRect().height;
+		const widthOf = (i: number) => items[i].getBoundingClientRect().width;
+
+		// 依目前語言/字級，設定裁切高度與初始寬度
+		const sync = () => {
+			rotator.style.height = itemHeight() + "px";
+			rotator.style.width = widthOf(index) + "px";
+			track.classList.add("is-instant");
+			track.style.transform = `translateY(${-itemHeight() * index}px)`;
+			// 強制重繪後恢復動畫
+			void track.offsetHeight;
+			track.classList.remove("is-instant");
+		};
+		sync();
+
+		const advance = () => {
+			index += 1;
+			track.style.transform = `translateY(${-itemHeight() * index}px)`;
+			rotator.style.width = widthOf(index) + "px";
+
+			// 滑到複製的那句後，無動畫瞬間跳回第一句，接續下一輪
+			if (index === items.length - 1) {
+				window.setTimeout(() => {
+					track.classList.add("is-instant");
+					index = 0;
+					track.style.transform = "translateY(0)";
+					rotator.style.width = widthOf(0) + "px";
+					void track.offsetHeight;
+					track.classList.remove("is-instant");
+				}, 600);
+			}
+		};
+
+		window.setInterval(advance, 3000);
+		window.addEventListener("resize", sync);
+	}
+
+	initRotator();
+</script>
