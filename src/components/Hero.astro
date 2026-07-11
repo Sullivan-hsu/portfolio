@@ -167,34 +167,35 @@ const phrases = [
 		color: #000;
 	}
 
-	/* 黑框輪播容器：翻牌視窗（超出範圍裁切），寬度平滑跟著文字伸縮 */
+	/* 輪播窗口：透明遮罩，只負責裁切上下。黑底在每一句身上（見 item）。 */
 	.hero__rotator {
 		display: inline-block;
 		overflow: hidden;
 		vertical-align: bottom;
-		background: #000;
-		color: #fff;
-		padding: 0.2em 0.35em;
-		box-sizing: content-box;
-		height: 1.25em; /* 一行高，JS 會換算成精確 px */
+		max-width: 100%;
+		width: max-content; /* 寬度 = 最寬那句黑底，較短的靠左、右側露出背景 */
 		font-size: clamp(1.25rem, 3.6vw, 2.5rem);
 		font-weight: 700;
 		line-height: 1.25;
-		/* 寬度瞬間跳到新句寬度（不平滑伸縮）；垂直滑動仍保留過渡 */
-		transition: none;
+		/* 高度由 JS 設定（一句黑底高 + 間隔） */
 	}
 	.hero__rotator-track {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
+		gap: 0.5em; /* 句子之間的間隔（滑動時會露出背景） */
 		transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 	.hero__rotator-track.is-instant {
 		transition: none;
 	}
+	/* 每一句 = 自己的黑底，文字與黑底一體、一起移動 */
 	.hero__rotator-item {
 		white-space: nowrap;
-		width: max-content; /* 保持文字自然寬度，量測才準、不被容器壓縮 */
+		width: max-content;
+		background: #000;
+		color: #fff;
+		padding: 0.2em 0.35em;
 		line-height: 1.25;
 	}
 
@@ -249,33 +250,37 @@ const phrases = [
 
 		let index = 0;
 
-		const itemHeight = () => originals[0].getBoundingClientRect().height;
-		const widthOf = (i: number) => items[i].getBoundingClientRect().width;
+		// 黑底句子的高度、以及「一句 + 一間隔」的步距（pitch）
+		const boxHeight = () => originals[0].getBoundingClientRect().height;
+		const pitch = () =>
+			items.length > 1
+				? items[1].offsetTop - items[0].offsetTop
+				: boxHeight();
+		const gap = () => pitch() - boxHeight();
 
-		// 依目前語言/字級，設定裁切高度與初始寬度
+		// 目前這句要落在窗口的位置：垂直置中（上下各留 gap/2）
+		const offsetFor = (i: number) => -(pitch() * i) + gap() / 2;
+
+		// 依目前字級設定窗口高度（一句黑底 + 一個間隔）與初始位置
 		const sync = () => {
-			rotator.style.height = itemHeight() + "px";
-			rotator.style.width = widthOf(index) + "px";
+			rotator.style.height = boxHeight() + gap() + "px";
 			track.classList.add("is-instant");
-			track.style.transform = `translateY(${-itemHeight() * index}px)`;
-			// 強制重繪後恢復動畫
-			void track.offsetHeight;
+			track.style.transform = `translateY(${offsetFor(index)}px)`;
+			void track.offsetHeight; // 強制重繪後恢復動畫
 			track.classList.remove("is-instant");
 		};
 		sync();
 
 		const advance = () => {
 			index += 1;
-			track.style.transform = `translateY(${-itemHeight() * index}px)`;
-			rotator.style.width = widthOf(index) + "px";
+			track.style.transform = `translateY(${offsetFor(index)}px)`;
 
-			// 滑到複製的那句後，無動畫瞬間跳回第一句，接續下一輪
+			// 滑到複製的第一句後，無動畫瞬間跳回真正的第一句，接續下一輪
 			if (index === items.length - 1) {
 				window.setTimeout(() => {
 					track.classList.add("is-instant");
 					index = 0;
-					track.style.transform = "translateY(0)";
-					rotator.style.width = widthOf(0) + "px";
+					track.style.transform = `translateY(${offsetFor(0)}px)`;
 					void track.offsetHeight;
 					track.classList.remove("is-instant");
 				}, 600);
