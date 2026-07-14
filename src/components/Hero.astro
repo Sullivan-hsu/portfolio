@@ -13,7 +13,7 @@ const phrases = [
 	<div class="container hero__content">
 		<div class="hero__inner">
 		<div class="hero__headline">
-			<span class="hero__intro">我是</span>
+			<span class="hero__intro">I'm</span>
 			<span class="hero__name">
 				<span class="hero__name-text"
 					>Sullivan<i class="hero__pin" aria-hidden="true"></i></span
@@ -94,14 +94,15 @@ const phrases = [
 		display: flex;
 		flex-wrap: wrap;
 		align-items: flex-end;
-		gap: 0.75rem 1.1rem;
-		margin-bottom: 1.6rem;
+		gap: 0.8rem 1.2rem;
+		margin-bottom: 1.8rem;
 	}
 	.hero__intro,
 	.hero__slash,
 	.hero__role {
-		font-size: clamp(2rem, 6vw, 3.5rem);
-		font-weight: 700;
+		font-size: clamp(2.2rem, 6.6vw, 3.9rem);
+		font-weight: 300;
+		font-style: italic;
 		line-height: 1;
 		color: #000;
 	}
@@ -111,8 +112,9 @@ const phrases = [
 		display: inline-flex;
 	}
 	.hero__name-text {
-		font-size: clamp(2rem, 6vw, 3.5rem);
-		font-weight: 700;
+		font-size: clamp(2.2rem, 6.6vw, 3.9rem);
+		font-weight: 300;
+		font-style: italic;
 		line-height: 1;
 		color: #000;
 		/* 實心綠底 */
@@ -148,10 +150,10 @@ const phrases = [
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 0.5rem;
+		gap: 0.6rem;
 	}
 	.hero__badge {
-		font-size: clamp(0.95rem, 2.2vw, 1.5rem);
+		font-size: 1.3rem;
 		font-weight: 500;
 		color: #000;
 		background: #fff;
@@ -166,11 +168,11 @@ const phrases = [
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.7rem;
-		margin-bottom: 1.6rem;
+		gap: 0.8rem;
+		margin-bottom: 1.8rem;
 	}
 	.hero__like-label {
-		font-size: clamp(1.2rem, 3.5vw, 2.25rem);
+		font-size: clamp(1.3rem, 3.9vw, 2.5rem);
 		font-weight: 500;
 		color: #000;
 	}
@@ -182,7 +184,7 @@ const phrases = [
 		vertical-align: bottom;
 		max-width: 100%;
 		width: max-content; /* 寬度 = 最寬那句黑底，較短的靠左、右側露出背景 */
-		font-size: clamp(1.25rem, 3.6vw, 2.5rem);
+		font-size: clamp(1.4rem, 4vw, 2.8rem);
 		font-weight: 700;
 		line-height: 1.25;
 		/* 高度由 JS 設定（一句黑底高 + 間隔） */
@@ -222,11 +224,11 @@ const phrases = [
 		gap: 0.3rem;
 	}
 	.hero__current-label {
-		font-size: clamp(1rem, 2vw, 1.25rem);
+		font-size: clamp(1.1rem, 2.2vw, 1.4rem);
 		color: #000;
 	}
 	.hero__logo {
-		height: 2rem;
+		height: 2.2rem;
 		width: auto;
 	}
 
