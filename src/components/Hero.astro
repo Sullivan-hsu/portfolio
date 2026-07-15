@@ -10,6 +10,18 @@ const phrases = [
 ---
 
 <section id="top" class="hero">
+	<img
+		src="/quote.svg"
+		class="hero__quote hero__quote--tl"
+		alt=""
+		aria-hidden="true"
+	/>
+	<img
+		src="/quote.svg"
+		class="hero__quote hero__quote--br"
+		alt=""
+		aria-hidden="true"
+	/>
 	<div class="container hero__content">
 		<div class="hero__inner">
 		<div class="hero__headline">
@@ -30,7 +42,13 @@ const phrases = [
 			<span class="hero__like-label">我喜歡</span>
 			<span class="hero__rotator" id="hero-rotator">
 				<span class="hero__rotator-track">
-					{phrases.map((p) => <span class="hero__rotator-item">{p}</span>)}
+					{
+						phrases.map((p) => (
+							<span class="hero__rotator-item">
+								<span class="hero__rotator-text">{p}</span>
+							</span>
+						))
+					}
 				</span>
 			</span>
 		</div>
@@ -81,6 +99,30 @@ const phrases = [
 	.hero__content {
 		position: relative;
 		z-index: 1;
+	}
+
+	/* 綠色引號裝飾：絕對定位在左上／右下，壓在內容下層 */
+	.hero__quote {
+		position: absolute;
+		z-index: 0;
+		width: clamp(70px, 8vw, 130px);
+		height: auto;
+		pointer-events: none;
+	}
+	.hero__quote--tl {
+		top: 12%;
+		left: 5%;
+	}
+	.hero__quote--br {
+		right: 5%;
+		bottom: 14%;
+		transform: rotate(180deg); /* 開引號轉 180° 成閉引號 */
+	}
+	/* 手機版：裝飾引號會疊到文字，隱藏較乾淨 */
+	@media (max-width: 640px) {
+		.hero__quote {
+			display: none;
+		}
 	}
 
 	/* ---------- 主標 ---------- */
@@ -168,13 +210,15 @@ const phrases = [
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.8rem;
+		gap: 0rem;
 		margin-bottom: 1.8rem;
 	}
 	.hero__like-label {
 		font-size: clamp(1.3rem, 3.9vw, 2.5rem);
 		font-weight: 500;
 		color: #000;
+		/* 電腦版：把黑框往右推開一點；手機版黑框換行到下方，此 margin 不顯影響 */
+		margin-right: 0.8rem;
 	}
 
 	/* 輪播窗口：透明遮罩，只負責裁切上下。黑底在每一句身上（見 item）。 */
@@ -187,7 +231,8 @@ const phrases = [
 		font-size: clamp(1.4rem, 4vw, 2.8rem);
 		font-weight: 700;
 		line-height: 1.25;
-		/* 高度由 JS 設定（一句黑底高 + 間隔） */
+		/* 高度由 JS 設定（貼合當前句），切換時平滑縮放 */
+		transition: height 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 	.hero__rotator-track {
 		display: flex;
@@ -199,14 +244,34 @@ const phrases = [
 	.hero__rotator-track.is-instant {
 		transition: none;
 	}
-	/* 每一句 = 自己的黑底，文字與黑底一體、一起移動 */
+	/* 每一句的排版容器：桌機一行、行動版可換行 */
 	.hero__rotator-item {
 		white-space: nowrap;
 		width: max-content;
+		line-height: 1.25;
+	}
+	/* 黑底套在文字上；box-decoration-break 讓換行時每一行各自成獨立黑塊 */
+	.hero__rotator-text {
 		background: #000;
 		color: #fff;
 		padding: 0.2em 0.35em;
-		line-height: 1.25;
+		-webkit-box-decoration-break: clone;
+		box-decoration-break: clone;
+	}
+
+	/* 手機版：窗口滿版、長句換行，每行各自黑塊、拉開行距使黑塊分開 */
+	@media (max-width: 640px) {
+		.hero__inner {
+			width: 100%;
+		}
+		.hero__rotator {
+			width: 100%;
+		}
+		.hero__rotator-item {
+			white-space: normal;
+			width: 100%;
+			line-height: 1.9;
+		}
 	}
 
 	/* 尊重「減少動態」偏好：關掉滑動與伸縮，改直接切換 */
@@ -260,39 +325,43 @@ const phrases = [
 
 		let index = 0;
 
-		// 黑底句子的高度、以及「一句 + 一間隔」的步距（pitch）
-		const boxHeight = () => originals[0].getBoundingClientRect().height;
-		const pitch = () =>
-			items.length > 1
-				? items[1].offsetTop - items[0].offsetTop
-				: boxHeight();
-		const gap = () => pitch() - boxHeight();
+		// 各句相對第一句的位置與高度（可容納「有的一行、有的兩行」的高度差）
+		const relTop = (i: number) => items[i].offsetTop - items[0].offsetTop;
+		const heightOf = (i: number) => items[i].getBoundingClientRect().height;
+		const gapBetween = () =>
+			items.length > 1 ? relTop(1) - heightOf(0) : 0;
+		// 窗口高度貼合「當前這句」＋一點間隔：短句窗口矮、長句高，鄰句永遠藏在外面
+		const viewportHeightFor = (i: number) => heightOf(i) + gapBetween();
+		// 讓第 i 句在窗口內置中（上下各留 gap/2）
+		const offsetFor = (i: number) => gapBetween() / 2 - relTop(i);
 
-		// 目前這句要落在窗口的位置：垂直置中（上下各留 gap/2）
-		const offsetFor = (i: number) => -(pitch() * i) + gap() / 2;
-
-		// 依目前字級設定窗口高度（一句黑底 + 一個間隔）與初始位置
-		const sync = () => {
-			rotator.style.height = boxHeight() + gap() + "px";
-			track.classList.add("is-instant");
-			track.style.transform = `translateY(${offsetFor(index)}px)`;
-			void track.offsetHeight; // 強制重繪後恢復動畫
-			track.classList.remove("is-instant");
+		// 套用第 i 句的窗口高度與位置；instant=true 時瞬間套用（無動畫）
+		const apply = (i: number, instant: boolean) => {
+			if (instant) {
+				track.style.transition = "none";
+				rotator.style.transition = "none";
+			}
+			rotator.style.height = viewportHeightFor(i) + "px";
+			track.style.transform = `translateY(${offsetFor(i)}px)`;
+			if (instant) {
+				void track.offsetHeight; // 強制重繪後恢復動畫
+				track.style.transition = "";
+				rotator.style.transition = "";
+			}
 		};
+
+		const sync = () => apply(index, true);
 		sync();
 
 		const advance = () => {
 			index += 1;
-			track.style.transform = `translateY(${offsetFor(index)}px)`;
+			apply(index, false);
 
 			// 滑到複製的第一句後，無動畫瞬間跳回真正的第一句，接續下一輪
 			if (index === items.length - 1) {
 				window.setTimeout(() => {
-					track.classList.add("is-instant");
 					index = 0;
-					track.style.transform = `translateY(${offsetFor(0)}px)`;
-					void track.offsetHeight;
-					track.classList.remove("is-instant");
+					apply(index, true);
 				}, 600);
 			}
 		};
