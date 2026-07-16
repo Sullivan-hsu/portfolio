@@ -1,12 +1,14 @@
 ---
 // Hero 首屏 —— 依 Figma 設計稿 (node 87:27) 重建。
 // 背景格紋與綠光暈用 CSS 畫（清晰、可縮放、零額外圖檔）；QLiEER logo 用原圖。
-// 黑框內三句話向上滾動輪播（見下方 <script>）。
+// 黑框內三句話用「打字機」效果打字→停留→刪除→打下一句（見下方 <script>）。
 const phrases = [
 	"把混亂的議題，梳理成值得解決的設計挑戰",
 	"透過研究、與使用者交流，去真正了解問題",
 	"利用設計在真實場域中創造價值",
 ];
+// 最長的一句 —— 當隱形佔位，先撐住寬高，打字時整塊不會位移
+const longest = phrases.reduce((a, b) => (b.length >= a.length ? b : a), phrases[0]);
 ---
 
 <section id="top" class="hero">
@@ -40,16 +42,14 @@ const phrases = [
 
 		<div class="hero__like">
 			<span class="hero__like-label">我喜歡</span>
-			<span class="hero__rotator" id="hero-rotator">
-				<span class="hero__rotator-track">
-					{
-						phrases.map((p) => (
-							<span class="hero__rotator-item">
-								<span class="hero__rotator-text">{p}</span>
-							</span>
-						))
-					}
-				</span>
+			<span class="hero__tw" id="hero-tw">
+				<span class="hero__tw-sizer" aria-hidden="true">{longest}_</span>
+				<span class="hero__tw-box"
+					><span class="hero__tw-content"
+						><span class="hero__tw-text"></span
+						><span class="hero__tw-cursor" aria-hidden="true">_</span></span
+					></span
+				>
 			</span>
 		</div>
 
@@ -209,7 +209,7 @@ const phrases = [
 	.hero__like {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
+		align-items: baseline; /* 用文字基線對齊「我喜歡」與黑框內文字 */
 		gap: 0rem;
 		margin-bottom: 1.8rem;
 	}
@@ -221,64 +221,73 @@ const phrases = [
 		margin-right: 0.8rem;
 	}
 
-	/* 輪播窗口：透明遮罩，只負責裁切上下。黑底在每一句身上（見 item）。 */
-	.hero__rotator {
+	/* 打字機黑框：隱形 sizer（最長句）在流內撐住寬高並提供文字基線；
+	   真正的黑框用絕對定位疊在上面，不影響基線，打字時整塊不位移 */
+	.hero__tw {
+		position: relative;
 		display: inline-block;
-		overflow: hidden;
-		vertical-align: bottom;
 		max-width: 100%;
-		width: max-content; /* 寬度 = 最寬那句黑底，較短的靠左、右側露出背景 */
 		font-size: clamp(1.4rem, 4vw, 2.8rem);
 		font-weight: 700;
 		line-height: 1.25;
-		/* 高度由 JS 設定（貼合當前句），切換時平滑縮放 */
-		transition: height 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 	}
-	.hero__rotator-track {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.5em; /* 句子之間的間隔（滑動時會露出背景） */
-		transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-	}
-	.hero__rotator-track.is-instant {
-		transition: none;
-	}
-	/* 每一句的排版容器：桌機一行、行動版可換行 */
-	.hero__rotator-item {
+	.hero__tw-sizer,
+	.hero__tw-box {
 		white-space: nowrap;
-		width: max-content;
-		line-height: 1.25;
 	}
-	/* 黑底套在文字上；box-decoration-break 讓換行時每一行各自成獨立黑塊 */
-	.hero__rotator-text {
+	.hero__tw-sizer {
+		visibility: hidden; /* 只佔位撐住寬高、提供基線，不顯示 */
+		padding: 0.2em 0.35em; /* 與黑框 padding 一致，寬度才對得上 */
+	}
+	.hero__tw-box {
+		position: absolute; /* 疊在 sizer 之上，不影響 .hero__tw 的文字基線 */
+		top: 0;
+		left: 0;
+	}
+	/* 黑底套在文字+游標上；box-decoration-break 讓換行時每行各自成獨立黑塊 */
+	.hero__tw-content {
 		background: #000;
 		color: #fff;
 		padding: 0.2em 0.35em;
 		-webkit-box-decoration-break: clone;
 		box-decoration-break: clone;
 	}
+	.hero__tw-cursor {
+		animation: tw-blink 1s step-end infinite;
+	}
+	@keyframes tw-blink {
+		0%,
+		50% {
+			opacity: 1;
+		}
+		50.01%,
+		100% {
+			opacity: 0;
+		}
+	}
 
-	/* 手機版：窗口滿版、長句換行，每行各自黑塊、拉開行距使黑塊分開 */
+	/* 手機版：滿版、長句換行，每行各自黑塊、拉開行距使黑塊分開 */
 	@media (max-width: 640px) {
 		.hero__inner {
 			width: 100%;
 		}
-		.hero__rotator {
+		.hero__tw {
 			width: 100%;
 		}
-		.hero__rotator-item {
+		.hero__tw-sizer,
+		.hero__tw-box {
 			white-space: normal;
-			width: 100%;
+		}
+		.hero__tw-sizer,
+		.hero__tw-content {
 			line-height: 1.9;
 		}
 	}
 
-	/* 尊重「減少動態」偏好：關掉滑動與伸縮，改直接切換 */
+	/* 尊重「減少動態」偏好：關掉游標閃爍（打字動畫由 JS 端略過） */
 	@media (prefers-reduced-motion: reduce) {
-		.hero__rotator,
-		.hero__rotator-track {
-			transition: none;
+		.hero__tw-cursor {
+			animation: none;
 		}
 	}
 
@@ -305,70 +314,55 @@ const phrases = [
 	}
 </style>
 
-<script>
-	// 黑框三句話「向上滾動」輪播，寬度平滑跟著文字伸縮，每 3 秒切換。
-	function initRotator() {
-		const rotator = document.getElementById("hero-rotator");
-		if (!rotator) return;
-		const track = rotator.querySelector<HTMLElement>(".hero__rotator-track");
-		if (!track) return;
+<script define:vars={{ phrases }}>
+	// 打字機效果：逐字打出 → 停留 → 逐字刪除 → 換下一句，循環不斷。
+	function initTypewriter() {
+		const box = document.getElementById("hero-tw");
+		if (!box) return;
+		const textEl = box.querySelector(".hero__tw-text");
+		if (!textEl) return;
 
-		const originals = Array.from(
-			track.querySelectorAll<HTMLElement>(".hero__rotator-item"),
-		);
-		if (originals.length < 2) return;
+		// 尊重「減少動態」偏好：不跑打字動畫，直接顯示第一句
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			textEl.textContent = phrases[0];
+			return;
+		}
 
-		// 在最後補一個「第一句」的複製，讓循環永遠向上、不會倒退跳回。
-		const clone = originals[0].cloneNode(true) as HTMLElement;
-		track.appendChild(clone);
-		const items = [...originals, clone];
+		const TYPE = 110; // 每個字打出的間隔（毫秒）
+		const DELETE = 55; // 每個字刪除的間隔
+		const HOLD = 2500; // 整句打完後停留
+		const GAP = 500; // 刪完到打下一句之間
 
-		let index = 0;
+		let phraseIndex = 0;
+		let charIndex = 0;
+		let deleting = false;
 
-		// 各句相對第一句的位置與高度（可容納「有的一行、有的兩行」的高度差）
-		const relTop = (i: number) => items[i].offsetTop - items[0].offsetTop;
-		const heightOf = (i: number) => items[i].getBoundingClientRect().height;
-		const gapBetween = () =>
-			items.length > 1 ? relTop(1) - heightOf(0) : 0;
-		// 窗口高度貼合「當前這句」＋一點間隔：短句窗口矮、長句高，鄰句永遠藏在外面
-		const viewportHeightFor = (i: number) => heightOf(i) + gapBetween();
-		// 讓第 i 句在窗口內置中（上下各留 gap/2）
-		const offsetFor = (i: number) => gapBetween() / 2 - relTop(i);
-
-		// 套用第 i 句的窗口高度與位置；instant=true 時瞬間套用（無動畫）
-		const apply = (i: number, instant: boolean) => {
-			if (instant) {
-				track.style.transition = "none";
-				rotator.style.transition = "none";
-			}
-			rotator.style.height = viewportHeightFor(i) + "px";
-			track.style.transform = `translateY(${offsetFor(i)}px)`;
-			if (instant) {
-				void track.offsetHeight; // 強制重繪後恢復動畫
-				track.style.transition = "";
-				rotator.style.transition = "";
-			}
-		};
-
-		const sync = () => apply(index, true);
-		sync();
-
-		const advance = () => {
-			index += 1;
-			apply(index, false);
-
-			// 滑到複製的第一句後，無動畫瞬間跳回真正的第一句，接續下一輪
-			if (index === items.length - 1) {
-				window.setTimeout(() => {
-					index = 0;
-					apply(index, true);
-				}, 600);
+		const tick = () => {
+			const phrase = phrases[phraseIndex];
+			if (!deleting) {
+				charIndex += 1;
+				textEl.textContent = phrase.slice(0, charIndex);
+				if (charIndex >= phrase.length) {
+					deleting = true;
+					window.setTimeout(tick, HOLD);
+				} else {
+					window.setTimeout(tick, TYPE);
+				}
+			} else {
+				charIndex -= 1;
+				textEl.textContent = phrase.slice(0, charIndex);
+				if (charIndex <= 0) {
+					deleting = false;
+					phraseIndex = (phraseIndex + 1) % phrases.length;
+					window.setTimeout(tick, GAP);
+				} else {
+					window.setTimeout(tick, DELETE);
+				}
 			}
 		};
 
-		window.setInterval(advance, 3000);
-		window.addEventListener("resize", sync);
+		window.setTimeout(tick, TYPE);
 	}
 
-	initRotator();
+	initTypewriter();
 </script>
