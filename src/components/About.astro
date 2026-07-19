@@ -1,68 +1,160 @@
 ---
-// 關於我。Phase 5 會換成你真正的自我介紹與技能。
-const skills = ["品牌設計", "UI/UX", "視覺設計", "插畫", "Figma", "排版"];
+// 關於我 — Design Philosophy（依 Figma node 153:2）
+// 置中標題（含揮手頭像 + ✨）＋ 三欄理念（理解/同理、邏輯、權衡），欄間有分隔線。
+const pillars = [
+	{
+		icon: "/about-icon-1.png",
+		title: "理解 / 同理",
+		text: "「當你真正了解某個問題時，在情感上它就會變成你的問題」，所以我在真正動手之前，會盡量靠近使用者的真實處境（訪談、數據、資料搜集等），當我能夠真正看見那個情境，那個問題就會開始讓我在意不已。",
+	},
+	{
+		icon: "/about-icon-2.png",
+		title: "邏輯",
+		text: "不單依靠直覺行事，我喜歡透過深入了解問題，輔以數據與實際資料，確保每一個設計決策背後都有清楚的依據。",
+	},
+	{
+		icon: "/about-icon-3.png",
+		title: "權衡",
+		text: "在規劃階段，我擅長規劃某個功能的長遠的完全體應該長什麼樣子，再依照現實條件（資源、技術限制、商業目標等）逐漸收斂出團隊的共識。",
+	},
+];
 ---
 
-<section id="about" class="section">
-	<div class="container about">
-		<p class="section-title">關於我</p>
-		<div class="about__grid">
-			<div class="about__bio">
-				<p>
-					這裡放你的自我介紹 —— 你的背景、設計理念、做過什麼、想找什麼樣的合作。
-					建議 2～3 段，讓人快速認識你。（佔位文字，Phase 5 替換）
-				</p>
-				<p>
-					可以聊聊你的工作方式、最在乎的設計價值，或一個代表性的經歷。
-				</p>
-			</div>
-			<aside class="about__skills">
-				<h3>專長</h3>
-				<ul>
-					{skills.map((s) => <li>{s}</li>)}
-				</ul>
-			</aside>
+<section id="about" class="section about">
+	<div class="container">
+		<!-- 標題 -->
+		<div class="about__heading">
+			<p class="about__eyebrow">
+				A little about my
+				<span class="about__avatar">
+					<img src="/about-avatar.png" alt="Sullivan" width="84" height="84" />
+				</span>
+				<span class="about__sparkle" aria-hidden="true">✨</span>
+			</p>
+			<h2 class="about__title">Design Philosophy</h2>
+		</div>
+
+		<!-- 三欄理念 -->
+		<div class="about__pillars">
+			{
+				pillars.map((p) => (
+					<div class="about__pillar">
+						<div class="about__pillar-head">
+							<img class="about__icon" src={p.icon} alt="" width="48" height="48" />
+							<h3 class="about__pillar-title">{p.title}</h3>
+						</div>
+						<p class="about__pillar-text">{p.text}</p>
+					</div>
+				))
+			}
 		</div>
 	</div>
 </section>
 
 <style>
-	.about__grid {
-		display: grid;
-		grid-template-columns: 2fr 1fr;
-		gap: 3rem;
+	/* ---------- 標題（整包置中、內部靠左） ---------- */
+	.about__heading {
+		width: fit-content;
+		max-width: 100%;
+		margin-inline: auto;
 	}
-	.about__bio {
-		font-size: 1.1rem;
-	}
-	.about__bio p {
-		margin: 0 0 1.25rem;
-	}
-	.about__skills h3 {
-		font-size: 1rem;
-		margin: 0 0 1rem;
-	}
-	.about__skills ul {
-		list-style: none;
-		padding: 0;
-		margin: 0;
+	.about__eyebrow {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		align-items: flex-end;
+		gap: 0.5em;
+		margin: 0;
+		font-size: clamp(1.6rem, 4vw, 2.5rem);
+		font-weight: 300;
+		font-style: italic;
+		line-height: 1.1;
+		color: #000;
 	}
-	.about__skills li {
-		border: 1px solid var(--color-border);
-		border-radius: 999px;
-		padding: 0.35rem 0.9rem;
-		font-size: 0.9rem;
-		color: var(--color-muted);
+	.about__avatar {
+		flex: none;
+		width: 2.1em;
+		height: 2.1em;
+		border-radius: 0.28em;
+		background: #e7fb9e;
+		box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);
+		transform: rotate(6.5deg);
+		overflow: hidden;
+	}
+	.about__avatar img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: 50% 15%;
+	}
+	.about__sparkle {
+		align-self: flex-start;
+		font-size: 0.7em;
+		font-style: normal;
+	}
+	.about__title {
+		margin: 8px 0 0;
+		font-size: clamp(2.2rem, 6vw, 3.5rem);
+		font-weight: 800;
+		line-height: 1;
+		color: #000;
 	}
 
-	/* 手機版：改成單欄堆疊 */
+	/* ---------- 三欄 ---------- */
+	.about__pillars {
+		--col-gap: clamp(2rem, 5vw, 4rem);
+		display: grid;
+		grid-template-columns: repeat(3, 1fr); /* 三欄等寬、無 padding → 外側貼齊容器邊 */
+		column-gap: var(--col-gap);
+		margin: clamp(2.5rem, 6vw, 5rem) 0 0;
+	}
+	.about__pillar {
+		position: relative;
+	}
+	/* 分隔線畫在左側欄間距的正中央 */
+	.about__pillar:not(:first-child)::before {
+		content: "";
+		position: absolute;
+		inset-block: 0;
+		left: calc(var(--col-gap) / -2);
+		width: 1px;
+		background: var(--color-border);
+	}
+	.about__pillar-head {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin-bottom: 1rem;
+	}
+	.about__icon {
+		width: 2.5rem;
+		height: 2.5rem;
+		object-fit: contain;
+	}
+	.about__pillar-title {
+		margin: 0;
+		font-size: 1.4rem;
+		font-weight: 600;
+		color: #000;
+	}
+	.about__pillar-text {
+		margin: 0;
+		font-size: 1rem;
+		line-height: 1.7;
+		letter-spacing: 0.02em;
+		color: #484848;
+	}
+
+	/* ---------- 手機版：三欄改直向堆疊 ---------- */
 	@media (max-width: 720px) {
-		.about__grid {
+		.about__pillars {
 			grid-template-columns: 1fr;
-			gap: 2rem;
+			gap: 2.5rem;
+		}
+		.about__pillar:not(:first-child)::before {
+			display: none; /* 手機改用水平分隔線 */
+		}
+		.about__pillar:not(:first-child) {
+			border-top: 1px solid var(--color-border);
+			padding-top: 2.5rem;
 		}
 	}
 </style>
